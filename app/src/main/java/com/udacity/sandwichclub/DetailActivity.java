@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        ImageView ingredientsIv = findViewById(R.id.image_iv);
+        final ImageView ingredientsIv = findViewById(R.id.image_iv);
 
 
         Intent intent = getIntent();
@@ -47,11 +48,23 @@ public class DetailActivity extends AppCompatActivity {
             closeOnError();
             return;
         }
-
-        populateUI(sandwich);
+        //callback assists with hiding image view if error loading image
         Picasso.with(this)
                 .load(sandwich.getImage())
-                .into(ingredientsIv);
+                .into(ingredientsIv, new com.squareup.picasso.Callback(){
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        ingredientsIv.setVisibility(View.GONE);
+                    }
+        });
+
+        populateUI(sandwich);
+
 
         setTitle(sandwich.getMainName());
     }
@@ -62,20 +75,42 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(Sandwich sandwich) {
+        //grab string from resources for later use in populating UI
+        final String SANDWICH_DATA_ERROR = getResources().getString(R.string.err_no_data);
         //create textviews - wire to activity_details - set text
         //aka tv
         TextView akaTv = findViewById(R.id.also_known_tv);
-        String akaList = TextUtils.join(", ", sandwich.getAlsoKnownAs());
-        akaTv.setText(akaList);
+        //Test for data before populating
+        if (sandwich.getAlsoKnownAs().isEmpty()){
+            akaTv.setText(SANDWICH_DATA_ERROR);
+        } else {
+            String akaList = TextUtils.join(", ", sandwich.getAlsoKnownAs());
+            akaTv.setText(akaList);
+        }
         //origin
         TextView originTv = findViewById(R.id.origin_tv);
-        originTv.setText(sandwich.getPlaceOfOrigin());
+        //Test for data before populating
+        if (sandwich.getPlaceOfOrigin().isEmpty()){
+            originTv.setText(SANDWICH_DATA_ERROR);
+        } else {
+            originTv.setText(sandwich.getPlaceOfOrigin());
+        }
         //ingredients
         TextView ingredientsTv = findViewById(R.id.ingredients_tv);
-        String ingredientsList = TextUtils.join(", ", sandwich.getIngredients());
-        ingredientsTv.setText(ingredientsList);
+        //Test for data before populating
+        if (sandwich.getIngredients().isEmpty()){
+            ingredientsTv.setText(SANDWICH_DATA_ERROR);
+        } else {
+            String ingredientsList = TextUtils.join(", ", sandwich.getIngredients());
+            ingredientsTv.setText(ingredientsList);
+        }
         //description
         TextView descriptionTv = findViewById(R.id.description_tv);
-        descriptionTv.setText(sandwich.getDescription());
+        //Test for data before populating
+        if (sandwich.getDescription().isEmpty()){
+            descriptionTv.setText(SANDWICH_DATA_ERROR);
+        } else {
+            descriptionTv.setText(sandwich.getDescription());
+        }
     }
 }

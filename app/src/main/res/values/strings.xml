@@ -6,6 +6,9 @@
     <string name="detail_place_of_origin_label">Place of origin:</string>
     <string name="detail_description_label">Description:</string>
     <string name="detail_ingredients_label">Ingredients:</string>
+    <!--Error string if no data-->
+    <string name="err_no_data">Data not found</string>
+    <string name="err_no_image">Image not found</string>
 
     <!-- Content descriptions-->
     <string name="sandwich_picture_content_description">Sandwich picture</string>
